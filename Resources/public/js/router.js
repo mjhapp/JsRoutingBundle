@@ -7,15 +7,37 @@ RtxLabs = {
                 return null;
             }
 
+            var extraparameters = [];
             for (key in parameters) {
                 var value = parameters[key];
                 var regexp = new RegExp("\{"+key+"\}", 'gi');
-                route = route.replace(regexp, value);
+                var newroute = route.replace(regexp, value);
+                if (route == newroute)
+                {
+                    extraparameters[key] = value;
+                }
+                route = newroute;
             }
 
             // check if there are unreplaced placeholders
             if (route.match("/\{.*\}")) {
                 RtxLabs.log('There are unreplaced placeholders left in the route');
+            }
+
+            var extra_size = 0;
+            for (key in extraparameters)
+            {
+                extra_size += 1;
+            }
+
+            if (extra_size > 0)
+            {
+                route = route + '?';
+            }
+
+            for (key in extraparameters)
+            {
+                route = route + key + '=' + extraparameters[key] + '&';
             }
 
             return route;
